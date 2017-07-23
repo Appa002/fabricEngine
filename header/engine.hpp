@@ -1,37 +1,45 @@
 #include <singleton.hpp>
 #include <vector>
+#include <types.hpp>
+#include <gameobject.hpp>
 
 #ifndef ENGINE_HPP
 #define ENGINE_HPP
 
 namespace fabric {
-	
-
-	// Struct holding the two Variables to be Linked
-	// T must be the same for both Variables
-	struct Link
-	{
-		template<class T>
-		T* pSender;
-
-		template<class T>
-		T* pReciver;
-	};
-
-
 	// The class holding all Engine stuff
 	// There will always only be one therfor the Singleton inheritence
 	class Engine : public fabric::Singleton<Engine>
 	{
 	public:
-		std::vector<Link> vWeb;
-
 		// Main Eventloop
 		// Calls it self till programm exits
 		int eventLoop();
+		void loadGameObject(GameObject* gObj);
+		void registerGameObject(); // This is not defined engine.cpp, but in the game.cpp
+
+		Engine() {
+			vLoadedGameObjects = new vector<GameObject*>;
+			vRegisteredGameObjects = new vector<GameObject *>;
+		}
+
+		~Engine() {
+			delete vLoadedGameObjects;
+			vLoadedGameObjects = 0;
+		
+			delete vRegisteredGameObjects;
+			vRegisteredGameObjects = 0;
+		}
+	
+	private:
+
+		vector<GameObject*>* vLoadedGameObjects;
+		vector<GameObject *>* vRegisteredGameObjects;
 
 		// Called from the eventloop when the programms exits
 		int exitRoutin();
+
+		
 	};
 
 }
