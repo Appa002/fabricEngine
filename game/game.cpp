@@ -7,16 +7,15 @@ The Engine wont load when this file has an error
 
 
 //HEADER
-#include <scripts/Player.hpp>
+#include "scripts/header/Player.hpp" 
 
 
-fabric::Engine::registerGameObject(){
+void fabric::Engine::registerGameObject(){
 //ENGINE_REGISTER
-	game::Player* player new game::Player();
+	game::Player* player = new game::Player();
 	fabric::Engine::vRegisteredGameObjects->push_back(player);
  
- 
-}
 
+}
 
 
