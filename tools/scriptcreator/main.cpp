@@ -46,7 +46,7 @@ int addIncludeHeader(string name, char* path) {
 		after.push_back(befor.at(i));
 
 		if (befor.at(i) == "//HEADER") {
-			after.push_back("#include <scripts/" + name + ".hpp>");
+			after.push_back("#include \"scripts/header/" + name + ".hpp\" ");
 		}
 	}
 
@@ -100,7 +100,7 @@ int addEngineRegister(string name, char* path) {
 			for (unsigned int i = 0; i < name.size(); i++)
 				lowerName[i] = tolower(name[i]);
 
-			after.push_back("	game::" + name + "* " + lowerName + " new game::" + name + "();");
+			after.push_back("	game::" + name + "* " + lowerName + " = new game::" + name + "();");
 			after.push_back("	fabric::Engine::vRegisteredGameObjects->push_back(" + lowerName + ");");
 			after.push_back(" ");
 		}
@@ -125,8 +125,12 @@ int addEngineRegister(string name, char* path) {
 int addSourceFile(string name, string path) {
 	ofstream oFile(path + name + ".cpp");
 
-	string fileContent = "";
+	if (!oFile)
+		return 1;
 
+	string fileContent;
+
+	fileContent += "#include \"../header/" + name + ".hpp\"\n";
 	fileContent += "#include <engine.hpp>\n";
 	fileContent += "#include <gameobject.hpp>\n";
 	fileContent += "#include <behavior.hpp>\n";
@@ -134,18 +138,15 @@ int addSourceFile(string name, string path) {
 	fileContent += "using namespace fabric;\n";
 	fileContent += "\n";
 	fileContent += "namespace game{\n";
-	fileContent += "	class " + name + " : public GameObject{\n";
-	fileContent += "	public:\n";
-	fileContent += "		// Use for initialization\n";
-	fileContent += "		void setup(){\n";
 	fileContent += "\n";
-	fileContent += "		}\n";
-	fileContent += "\n";
-	fileContent += "		// Use for frame by frame logic\n";
-	fileContent += "		void update (){\n";
-	fileContent += "\n";
-	fileContent += "		}\n";
-	fileContent += "	};\n";
+
+	fileContent += "void " + name + "::setup(){\n";
+	fileContent += "	// Use this for inital setup\n";
+	fileContent += "	}\n";
+
+	fileContent += "void " + name + "::update(){\n";
+	fileContent += "	// Use this for frame by frame logic\n";
+	fileContent += "	}\n";
 	fileContent += "}";
 
 
@@ -155,6 +156,46 @@ int addSourceFile(string name, string path) {
 	return 0;
 }
 
+
+int addHeaderFile(string name, string path) {
+	ofstream oFile(path + name + ".hpp");
+
+	if (!oFile)
+		return 1;
+
+
+	string upperName = name;
+	for (unsigned int i = 0; i < name.size(); i++)
+		upperName[i] = toupper(name[i]);
+
+	string fileContent = "";
+
+	fileContent += "#ifndef " + upperName + "_HPP" + "\n";
+	fileContent += "#define " + upperName + "_HPP" + "\n";
+
+	fileContent += "\n";
+
+	fileContent += "#include <engine.hpp> \n";
+	fileContent += "#include <gameobject.hpp>\n";
+	fileContent += "#include <behavior.hpp>\n";
+	fileContent += "\n";
+	fileContent += "using namespace fabric;\n";
+	fileContent += "\n";
+	fileContent += "namespace game{\n";
+	fileContent += "	class " + name + " : public GameObject{\n";
+	fileContent += "	public:\n";
+	fileContent += "		void setup();\n";
+	fileContent += "		void update ();\n";
+	fileContent += "	};\n";
+	fileContent += "}\n";
+	fileContent += "#endif";
+
+
+	oFile.write(fileContent.c_str(), fileContent.size());
+	oFile.close();
+
+	return 0;
+}
 
 void waitForExit() {
 	string input;
@@ -207,6 +248,12 @@ int main() {
 		cout << "... .cpp file has been created in 'scripts/source'" << endl;
 	else
 		cout << "... .cpp file could not be created in'scripts/source'" << endl;
+
+	lhs = addHeaderFile(input, "../../game/scripts/header/");
+	if (lhs == 0)
+		cout << "... .hpp file has been created in 'scripts/header'" << endl;
+	else
+		cout << "... .hpp file could not be created in'scripts/header'" << endl;
 	
 	cout << endl;
 	cout << "Script has been added, your welcome" << endl;
