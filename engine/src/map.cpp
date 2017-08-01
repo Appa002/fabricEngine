@@ -1,0 +1,6 @@
+namespace fabric {
+
+	class Map {
+
+	};
+}
