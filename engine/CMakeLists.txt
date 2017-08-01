@@ -9,6 +9,8 @@ set(HEADER_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/header/singleton.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/header/types.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/header/gameobject.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/header/map.hpp
+
 	${CMAKE_CURRENT_SOURCE_DIR}/game/scripts/header
 )
 
@@ -16,6 +18,8 @@ set(SOURCE_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/behavior.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/engine.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/gameobject.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/map.cpp
+
 	${CMAKE_CURRENT_SOURCE_DIR}/game/game.cpp
 )
 
