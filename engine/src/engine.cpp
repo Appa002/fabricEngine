@@ -27,10 +27,6 @@ int Engine::eventLoop() {
 	return 0;
 }
 
-void Engine::loadGameObject(GameObject* gObj){
-	vLoadedGameObjects->push_back(gObj);
-}
-
 int Engine::exitRoutin() {
 
 	cout << "Good bye!" << endl;
