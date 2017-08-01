@@ -16,5 +16,8 @@ using namespace std;
 
 int main() {
 	Engine::get()->eventLoop();
+
+	Engine::del();
+
 	return 0;
 }
