@@ -2,6 +2,7 @@
 #include <vector>
 #include <types.hpp>
 #include <gameobject.hpp>
+#include "../SDL/include/SDL.h"
 
 #ifndef ENGINE_HPP
 #define ENGINE_HPP
@@ -12,9 +13,12 @@ namespace fabric {
 	class Engine : public fabric::Singleton<Engine>
 	{
 	public:
+
+		vector<GameObject*>* vLoadedGameObjects;
+
 		// Main Eventloop
 		// Calls it self till programm exits
-		int eventLoop();
+		int startRoutin();
 
 		Engine() {
 			vLoadedGameObjects = new vector<GameObject*>;
@@ -27,10 +31,13 @@ namespace fabric {
 	
 	private:
 
-		vector<GameObject*>* vLoadedGameObjects;
+		SDL_Window* m_pWindow;
+		SDL_Surface* m_pScreenSurface;
+		SDL_Event* m_event;
 
 		// Called from the eventloop when the programms exits
 		int exitRoutin();
+		int eventLoop();
 
 		
 	};
