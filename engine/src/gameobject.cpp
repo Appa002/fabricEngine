@@ -8,8 +8,6 @@ using namespace fabric;
 
 void GameObject::update() {
 
-	cout << "Old!" << endl;
-
 	for (unsigned int i = 0; i < vLinkNet->size(); i++) {
 		// Get the type the Link connects by casting the void pointer
 		// to the class ILink wich all Links implement
