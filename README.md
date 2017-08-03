@@ -1,18 +1,3 @@
-# Fabric Engin
+# Fabric Engine
 
-Tiny, tiny ""engine""
-
-## Instanciation Tree
-
-                         Engine
-                       /       \
-                      /         \
-                     /           \       
-                    /             \ 
-                   / Keeps Pointer \
-                  /       to:       \
-                GameObject    GameObject  <---------------------  Get instaciated by game.cpp.
-                |        |        |
-                |        |        |     Instaciate and keep pointer to:
-                |        |        |
-            Behavior   Behavior   Behavior
+## SDL is required add libs and include header into SDL/include and SDL/lib/(win)32
