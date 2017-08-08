@@ -26,12 +26,9 @@ namespace fabric {
 	class Map: public Singleton<Map> {
 	public:
 		IMap* m_mMap;
-		int load(IMap* map);
+		int load(char* path);
 		int unload();
 	};
-
-
-
 
 }
 

@@ -1,14 +1,37 @@
 #include <map.hpp>
 #include <iostream>
+#include <Windows.h>
 
 using namespace std;
 using namespace fabric;
 
+typedef int(*f_loadmap)();
 
-int Map::load(IMap* map) {
-	m_mMap = map;
-	std::cout << "Loading..." << std::endl;
-	map->load();
+///TODO: Linux and Mac compatibility
+
+int Map::load(char* path) {
+	// Load the map dll into memory
+	HINSTANCE hGetProcIDLL = LoadLibrary(path);
+
+	cout << path << endl;
+
+	if (!hGetProcIDLL) {
+		cout << "Could not load DLL at " << path << endl;
+		return EXIT_FAILURE;
+	}
+
+	// Get adress to the loadmap function defied in the DLL
+	f_loadmap loadmap = (f_loadmap)GetProcAddress(hGetProcIDLL, "loadmap");
+
+	if (!loadmap) {
+		cout << "Could not get loadmap function" << endl;
+		return EXIT_FAILURE;
+	}
+	
+	//Unload library
+	FreeLibrary(hGetProcIDLL);
+
+	loadmap();
 
 	// Spawn all Behaviors for the gameobjs
 	for (unsigned int i = 0; i < Engine::get()->vLoadedGameObjects->size(); i++) {
@@ -26,6 +49,7 @@ int Map::load(IMap* map) {
 
 
 	return 0;
+
 }
 
 
