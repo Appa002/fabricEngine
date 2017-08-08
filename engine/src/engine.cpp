@@ -6,8 +6,8 @@
 #include <singleton.hpp>
 #include <behavior.hpp>
 #include <map.hpp>
-#include "../SDL/include/SDL.h"
-#include "../game/resources/maps/badwater.hpp"
+#include <SDL.h>
+
 
 using namespace std;
 using namespace fabric;
@@ -16,7 +16,7 @@ using namespace fabric;
 int Engine::startRoutin() {
 	cout << "Initializing Fabric Engine" << endl;
 	cout << "Loading default Map" << endl;
-	Map::get()->load(new Badwater);
+	//Map::get()->load(new Badwater);
 
 	cout << " " << endl;
 
