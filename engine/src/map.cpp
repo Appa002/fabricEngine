@@ -1,11 +1,12 @@
 #include <map.hpp>
 #include <iostream>
 #include <Windows.h>
+#include <vector>
 
 using namespace std;
 using namespace fabric;
 
-typedef int(*f_loadmap)();
+typedef vector<GameObject *>*(*f_loadmap)();
 
 ///TODO: Linux and Mac compatibility
 
@@ -27,11 +28,12 @@ int Map::load(char* path) {
 		cout << "Could not get loadmap function" << endl;
 		return EXIT_FAILURE;
 	}
-	
-	//Unload library
-	FreeLibrary(hGetProcIDLL);
 
-	loadmap();
+	// For safety delete the vLoadedGameObjects Pointer
+	delete Engine::get()->vLoadedGameObjects;
+
+	// Execute load and overwrite the vLoadedGameopjects pointer
+	Engine::get()->vLoadedGameObjects = loadmap();
 
 	// Spawn all Behaviors for the gameobjs
 	for (unsigned int i = 0; i < Engine::get()->vLoadedGameObjects->size(); i++) {
@@ -42,11 +44,12 @@ int Map::load(char* path) {
 	std::cout << Engine::get()->vLoadedGameObjects->size();
 	std::cout << " entitie(s)" << std::endl;
 
+	m_mMap = &hGetProcIDLL;
+
 	// Call Setup on just loaded gameobjects
 	for (unsigned int i = 0; i < Engine::get()->vLoadedGameObjects->size(); i++) {
 		Engine::get()->vLoadedGameObjects->at(i)->setup();
 	}
-
 
 	return 0;
 
@@ -55,7 +58,14 @@ int Map::load(char* path) {
 
 int Map::unload() {
 	std::cout << "Unloading..." << std::endl;
-	m_mMap->unload();
+	
+	if (m_mMap) {
+		FreeLibrary(*m_mMap);
+		delete m_mMap;
+		m_mMap = 0;
+	}
+
+
 	std::cout << "Unloaded..." << std::endl;
 	return 0;
 }
