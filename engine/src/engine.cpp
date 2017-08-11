@@ -16,7 +16,7 @@ using namespace fabric;
 int Engine::startRoutin() {
 	cout << "Initializing Fabric Engine" << endl;
 	cout << "Loading default Map" << endl;
-	//Map::get()->load(new Badwater);
+//	Map::get()->load("map.dll");
 
 	cout << " " << endl;
 
@@ -46,6 +46,7 @@ int Engine::startRoutin() {
 
 
 	m_pScreenSurface = SDL_GetWindowSurface(m_pWindow);
+
 	SDL_FillRect(m_pScreenSurface, NULL, SDL_MapRGB(m_pScreenSurface->format, 0xFF, 0xFF, 0xFF));
 	SDL_UpdateWindowSurface(m_pWindow);
 
@@ -56,29 +57,28 @@ int Engine::startRoutin() {
 
 
 int Engine::eventLoop() {
+	bool bQuit = false;
+	
+	do
+	{
+		for (unsigned int i = 0; i < vLoadedGameObjects->size(); i++) {
+			vLoadedGameObjects->at(i)->update();
+		}
 
-	for (unsigned int i = 0; i < vLoadedGameObjects->size(); i++) {
-		vLoadedGameObjects->at(i)->update();
-	}
 
-	SDL_UpdateWindowSurface(m_pWindow);
+		while (SDL_PollEvent(&m_event) != 0) {
+			if (m_event.type == SDL_QUIT) {
+
+				bQuit = true;
+				return 0;
+			}
+		}
+
+		SDL_UpdateWindowSurface(m_pWindow);
+
+	} while (!bQuit);
 
 
-	m_event = new SDL_Event();
-
-	SDL_PollEvent(m_event);
-
-	if (m_event->type == SDL_QUIT) {
-
-		delete m_event;
-		m_event = 0;
-		return 0;
-	}
-
-	delete m_event;
-	m_event = 0;
-
-	Engine::get()->eventLoop();
 	return 0;
 }
 
