@@ -1,3 +1,6 @@
-# Fabric Engine
+# Fabric Engine a tiny tiny engine
 
-## SDL is required add libs and include header into SDL/include and SDL/lib/(win)32
+
+### Setup:
+
+SDL is requiered put the devel library into engine/SDL you might need to change your CMake.txt if the naming conversation changes. Currently the conversation is SDL/include, SDL/lib/x86 and SDL/lib/x64. The engine loads maps as DLLs please be cearfull as arbitrary code can be excuted.
