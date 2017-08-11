@@ -2,7 +2,7 @@
 #include <vector>
 #include <types.hpp>
 #include <gameobject.hpp>
-#include "../SDL/include/SDL.h"
+#include <SDL.h>
 
 #ifndef ENGINE_HPP
 #define ENGINE_HPP
@@ -14,7 +14,7 @@ namespace fabric {
 	{
 	public:
 
-		vector<GameObject*>* vLoadedGameObjects;
+		vector<GameObject*>* vLoadedGameObjects = 0;
 
 		// Main Eventloop
 		// Calls it self till programm exits
@@ -31,9 +31,9 @@ namespace fabric {
 	
 	private:
 
-		SDL_Window* m_pWindow;
-		SDL_Surface* m_pScreenSurface;
-		SDL_Event* m_event;
+		SDL_Window* m_pWindow = 0;
+		SDL_Surface* m_pScreenSurface = 0;
+		SDL_Event m_event;
 
 		// Called from the eventloop when the programms exits
 		int exitRoutin();
