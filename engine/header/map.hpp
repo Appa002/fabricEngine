@@ -6,26 +6,16 @@
 #include <string>
 #include <engine.hpp>
 #include <iostream>
+#include <Windows.h>
 
 using namespace std;
 
 
 namespace fabric {
-	
-	class IMap {
-	public:
-		virtual void load() {}
-		
-		void unload() {
-			for (unsigned int i = 0; i < Engine::get()->vLoadedGameObjects->size(); i++) {
-				delete Engine::get()->vLoadedGameObjects->at(i);
-			}
-		}
-	};
 
 	class Map: public Singleton<Map> {
 	public:
-		IMap* m_mMap;
+		HINSTANCE* m_mMap = 0;
 		int load(char* path);
 		int unload();
 	};
