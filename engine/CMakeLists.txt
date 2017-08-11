@@ -27,5 +27,5 @@ add_subdirectory(game/scripts/source)
 
 add_executable(engine main.cpp ${HEADER_FILES} ${SOURCE_FILES})
 target_link_libraries(engine game)
-target_link_libraries(engine ${CMAKE_CURRENT_SOURCE_DIR}/SDL/lib/win32/SDL2.lib)
-target_link_libraries(engine ${CMAKE_CURRENT_SOURCE_DIR}/SDL/lib/win32/SDL2main.lib)
+target_link_libraries(engine ${CMAKE_CURRENT_SOURCE_DIR}/SDL/lib/x86/SDL2.lib)
+target_link_libraries(engine ${CMAKE_CURRENT_SOURCE_DIR}/SDL/lib/x86/SDL2main.lib)
