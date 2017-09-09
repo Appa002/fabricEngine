@@ -8,6 +8,20 @@ void defaultSetup() {
 	std::cout << "Default setup called, is the gameobject correctly setup?" << std::endl;
 }
 
+void fabric::GameObject::free()
+{
+	while (GameObject::attributes.size() > 1)
+	{
+		if (GameObject::attributes.at(GameObject::attributes.size() - 1).isValid()) {
+			GameObject::attributes.erase(GameObject::attributes.end() - 1);
+		}
+	}
+		
+
+	FreeLibrary(GameObject::dllHandle);
+
+}
+
 fabric::GameObject::GameObject() {
 
 	Attribute attr;

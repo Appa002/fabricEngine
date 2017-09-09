@@ -44,6 +44,7 @@ namespace fabric {
 		GameObject();
 		~GameObject();
 
+		void free();
 		std::vector<Attribute> getAttributeVector();
 		Attribute getAttribute(std::string name);
 		template<typename T> void addAttribute(std::string name, T* content);
