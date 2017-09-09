@@ -93,9 +93,9 @@ inline void fabric::GameObject::removeAttribute(std::string name)
 {
 	unsigned int i = 0;
 	Attribute attr = findAttribute<T>(name, &i);
-
-	//delete reinterpret_cast<T*>(attr.content);
+	delete reinterpret_cast<T*>(attr.content);
 	GameObject::attributes.erase(GameObject::attributes.begin() + i);
+	
 }
 
 template<typename T>
