@@ -17,13 +17,13 @@ namespace fabric {
 	public:
 
 		int isValid() {
-			int out = 1;
+			int out = true;
 			if (name == "")
-				out = 0;
+				out = false;
 			if (content == 0)
-				out = 0;
+				out = false;
 			if (hash == 0)
-				out = 0;
+				out = false;
 			return out;
 		}
 
