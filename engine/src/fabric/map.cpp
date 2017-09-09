@@ -86,7 +86,7 @@ int fabric::Map::open(){
 		GameObject* gObj = new GameObject();
 
 		HINSTANCE dllHandle = LoadLibrary(("./__game/" + path).c_str()); // "./__game/" + path
-
+		gObj->dllHandle = dllHandle;
 
 		gObj->setupPointer = (functionType)(GetProcAddress(dllHandle, "setup"));
 		gObj->updatePointer = (functionType)(GetProcAddress(dllHandle, "update"));
