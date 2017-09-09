@@ -61,39 +61,11 @@ int fabric::Map::pushToTop(std::string name, bool __first)
 int fabric::Map::close() {
 
 	for (unsigned int gameObjectIndex = 0; gameObjectIndex < Map::gameObjects.size(); gameObjectIndex++) {
-		auto curGameObject = Map::gameObjects.at(gameObjectIndex);
-		for (unsigned int attribIndex = 0; attribIndex < curGameObject->getAttributeVector().size(); attribIndex++) {
+		Map::gameObjects.at(gameObjectIndex)->free();
 
-			auto curAttribute = curGameObject->getAttributeVector().at(attribIndex);
-			
-			if (curAttribute.isValid()) {
-				size_t hash = curAttribute.hash;
-				if (hash == typeid(int).hash_code())
-					curGameObject->removeAttribute<int>(curAttribute.name);
-
-				else if (hash == typeid(std::string).hash_code())
-					curGameObject->removeAttribute<std::string>(curAttribute.name);
-
-				else if (hash == typeid(bool).hash_code())
-					curGameObject->removeAttribute<bool>(curAttribute.name);
-
-				else if (hash == typeid(double).hash_code())
-					curGameObject->removeAttribute<double>(curAttribute.name);
-				else
-					std::cout << "Not a valid type" << std::endl;
-			}
-			
-		}
-
-		
-
-		delete curGameObject;
+		delete Map::gameObjects.at(gameObjectIndex);
 		Map::gameObjects.erase(Map::gameObjects.begin() + gameObjectIndex);
 		
-	}
-
-	for (unsigned int i = 0; i < Map::dllHandles.size(); i++) {
-		FreeLibrary(Map::dllHandles.at(i));
 	}
 	return 0;
 }
