@@ -5,6 +5,7 @@
 #define LOGFILE_WITH_MACROS
 #include <fabric/logfile.hpp>
 
+#include <fabric/gameobjecthandler.hpp>
 #include <fabric/singleton.hpp>
 #include <vector>
 #include <fabric/types.hpp>
@@ -22,6 +23,8 @@
 #include <SDL_opengl.h>
 #include <GL\GLU.h>
 #include <fabric/unit_framework.hpp>
+#include <fabric/error_handler.hpp>
+
 
 namespace fabric {
 
@@ -31,6 +34,9 @@ namespace fabric {
 	class Engine : public fabric::Singleton<Engine>
 	{
 	public:
+
+		unsigned long long state = FB_JUST_CREATED;
+
 		int startRoutin();
 		void abortRoutin();
 		Engine();
@@ -56,5 +62,6 @@ namespace fabric {
 	};
 
 }
+
 
 #endif //!ENGINE_HPP
