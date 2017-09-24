@@ -16,8 +16,7 @@ int fabric::Engine::startRoutin() {
 	LOG_OUT("Loading default Map", "[INFO]");
 	LOG_OUT("Initializing SDL", "[INFO]");
 
-	int sdl_init_return = SDL_Init(SDL_INIT_VIDEO);
-	LOG_ASSERT(int, sdl_init_return, 0, "Initilized SDL" ,">=");
+	SDL_Init(SDL_INIT_VIDEO);
 
 	LOG_OUT("Creating Window", "[INFO]");
 
@@ -26,20 +25,13 @@ int fabric::Engine::startRoutin() {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 	m_pWindow = SDL_CreateWindow("Fabric Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-	
-	LOG_ASSERT(int*, reinterpret_cast<int*>(m_pWindow), 0, "Window created correctly", "!=");
-
 	m_gContext = SDL_GL_CreateContext(m_pWindow);
 
 	SDL_GL_MakeCurrent(fabric::Engine::m_pWindow, fabric::Engine::m_gContext);
 
 	glewExperimental = GL_TRUE;
-	GLenum glewError = glewInit();
-
-	LOG_ASSERT(GLenum, glewError, GLEW_OK, "Glew initilized correctly, GLEW Error" + std::string(reinterpret_cast<const char*>(glewGetErrorString(glGetError()))), "==");
-
-	//Use Vsync
-	LOG_ASSERT(int, SDL_GL_SetSwapInterval(1), 0 , "Correctly setup VSync, SDL Error: " + std::string(SDL_GetError()), ">=");
+	glewInit();
+	SDL_GL_SetSwapInterval(1);
 
 	LOG_OUT("Build: 0  ", "[INFO]");
 	LOG_OUT("Start Map: Badwater", "[INFO]");
@@ -49,25 +41,45 @@ int fabric::Engine::startRoutin() {
 
 	LOG_ASSERT(const int*, reinterpret_cast<const int*>(glGetString(GL_RENDERER)), 0, "glGetString(GL_RENDERER) is not a nullpointer", "!=");
 	LOG_OUT("Renderer: " + std::string(reinterpret_cast<const char*>(glGetString(GL_RENDERER))), "[INFO]");
+	
+	
+	Engine::state = FB_CONTEXT_CREATED;
 
-	std::vector<GLfloat> points{
-		0.0f, 0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		-0.5f, -0.5f, 0.0f
-	};
+	GameObject* gObj = new GameObject();
 
-	VertexBufferObject vbo = VertexBufferObject(true, GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-	vbo.make(points);
+	Mesh mesh = Mesh();
+	std::vector<vec3> _data;
+	vec3 myVec;
 
-	vao.generate();             
+	myVec.x = 0.0f;
+	myVec.y = 0.5f;
+	myVec.z = 0.0f;
+	_data.push_back(myVec);
 
-	vao.enableAttribArray(0, vbo);
-	vao.setVertexAtrrib(0, 3, vbo);
+	myVec = vec3();
 
-	vs = std::unique_ptr<Shader>( new Shader(GL_VERTEX_SHADER, "./vertex.glsl") );
+	myVec.x = 0.5f;
+	myVec.y = -0.5f;
+	myVec.z = 0.0f;
+	_data.push_back(myVec);
+
+	myVec = vec3();
+
+	myVec.x = -0.5f;
+	myVec.y = -0.5f;
+	myVec.z = 0.0f;
+	_data.push_back(myVec);
+
+
+	mesh.make(_data);
+	gObj->setMesh(mesh);
+
+	fabric::GameObjectHandler::get()->addGameObject(gObj, false);
+	
+	vs = std::unique_ptr<Shader>( new Shader(GL_VERTEX_SHADER, "./__game/vertex.glsl") );
 	LOG_OUT("Vertex Shader compile info: " + vs->getLog(), "[INFO]");
 
-	fs = std::unique_ptr<Shader>( new Shader(GL_FRAGMENT_SHADER, "./fragment.glsl") );
+	fs = std::unique_ptr<Shader>( new Shader(GL_FRAGMENT_SHADER, "./__game/fragment.glsl") );
 	LOG_OUT("Fragment Shader compile info: " + vs->getLog(), "[INFO]");
 
 	shader_programme = std::unique_ptr<fabric::ShaderProgram> (new ShaderProgram());
@@ -75,7 +87,7 @@ int fabric::Engine::startRoutin() {
 	shader_programme->attach(vs);
 	shader_programme->link();
 	
-	LOG_ASSERT(int, shader_programme->validate() , 0, "Succsesfully validated ", "==");
+	shader_programme->validate();
 	
 	UNIT_PUSH(new int((int)m_pWindow));
 
@@ -101,6 +113,8 @@ int fabric::Engine::startRoutin() {
 		return out;
 	);
 
+
+	Engine::state = FB_STARTUP_COMPLETE;
 
 	Engine::eventLoop();
 	Engine::exitRoutin();
@@ -128,9 +142,7 @@ int fabric::Engine::eventLoop() {
 
 
 		shader_programme->use();
-		glBindVertexArray(Engine::vao.handle);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-
+		GameObjectHandler::get()->renderAll();
 		SDL_GL_SwapWindow(m_pWindow);
 	} 
 
