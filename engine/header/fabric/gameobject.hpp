@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <fabric/types.hpp>
+#include <fabric/mesh.hpp>
 #include <typeinfo>
 #include <exception>
 #include <memory>
@@ -36,14 +37,17 @@ namespace fabric {
 	{
 	public:
 
-		HINSTANCE dllHandle;
+		std::vector<HINSTANCE> dllHandles;
+		int priority = 0;
 		
-		void(*updatePointer)();
-		void(*setupPointer)();
+		std::vector<void(*)()> updatePointers;
+		std::vector<void(*)()> setupPointers;
 
 		GameObject();
 		~GameObject();
 
+		int render();
+		int setMesh(Mesh _mesh);
 		void free();
 		std::vector<Attribute> getAttributeVector();
 		Attribute getAttribute(std::string name);
@@ -55,7 +59,7 @@ namespace fabric {
 
 	private:
 		std::vector<Attribute> attributes;
-		
+		Mesh mesh;
 	};
 }
 
