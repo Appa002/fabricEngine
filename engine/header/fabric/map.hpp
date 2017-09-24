@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <memory>
+#include <fabric/gameobjectHandler.hpp>
 #include <Windows.h>
 #include <vector>
 #include <fabric/gameobject.hpp>
@@ -21,13 +22,9 @@ namespace fabric {
 		~Map();
 
 	private:
-
-
-		int pushToTop(std::string name);
-		int pushToTop(std::string name, bool __first);
+		int pushToTop(std::string name, lua_State* L);
+		int pushToTop(std::string name, lua_State* L, bool __first);
 		lua_State* L;
-		std::vector<fabric::GameObject*> gameObjects;
-		std::vector<HINSTANCE> dllHandles;
 	};
 
 }

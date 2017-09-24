@@ -20,13 +20,13 @@ fabric::Map::~Map()
 	lua_close(Map::L);
 }
 
-int fabric::Map::pushToTop(std::string name) {
-	Map::pushToTop(name, true);
+int fabric::Map::pushToTop(std::string name, lua_State* L) {
+	Map::pushToTop(name, L, true);
 	return 0;
 }
 
 
-int fabric::Map::pushToTop(std::string name, bool __first)
+int fabric::Map::pushToTop(std::string name, lua_State* L, bool __first)
 {
 	bool first = __first;
 	std::string subPropertyName = "";			//example: "foo.bar.x": here foo, bar and x are subPropertyNames as they are seperated by a .
@@ -37,15 +37,15 @@ int fabric::Map::pushToTop(std::string name, bool __first)
 		if (name.at(i) == '.' || i + (unsigned int)(1) >= name.size())
 		{
 			if (first)
-				lua_getglobal(Map::L, subPropertyName.c_str());
+				lua_getglobal(L, subPropertyName.c_str());
 			else
-				lua_getfield(Map::L, -1, subPropertyName.c_str());
+				lua_getfield(L, -1, subPropertyName.c_str());
 
 			first = false;
 
-			if (lua_isnil(Map::L, -1)) {
+			if (lua_isnil(L, -1)) {
 				std::cout << subPropertyName.c_str() << " in " << name.c_str() << " is nil" << std::endl;
-				lua_pop(Map::L, 1);
+				lua_pop(L, 1);
 				return 1;
 			}
 
@@ -60,93 +60,115 @@ int fabric::Map::pushToTop(std::string name, bool __first)
 
 int fabric::Map::close() {
 
-	for (unsigned int gameObjectIndex = 0; gameObjectIndex < Map::gameObjects.size(); gameObjectIndex++) {
-		Map::gameObjects.at(gameObjectIndex)->free();
+	for (unsigned int gameObjectIndex = 0; gameObjectIndex < GameObjectHandler::get()->gObjs.size(); gameObjectIndex++) {
+		GameObjectHandler::get()->gObjs.at(gameObjectIndex)->free();
 
-		delete Map::gameObjects.at(gameObjectIndex);
-		Map::gameObjects.erase(Map::gameObjects.begin() + gameObjectIndex);
+		delete GameObjectHandler::get()->gObjs.at(gameObjectIndex);
+		GameObjectHandler::get()->gObjs.erase(GameObjectHandler::get()->gObjs.begin() + gameObjectIndex);
 		
 	}
 	return 0;
 }
 
+
+
 typedef void(*functionType)();
-int fabric::Map::open(){
-	pushToTop("game_objects.amount");
-	int amount = (int)lua_tointeger(Map::L, -1);
+int fabric::Map::open() {
+	pushToTop("data.size", Map::L);
+	int gameObjectSize = (int)lua_tointeger(Map::L, -1);
 	lua_pop(Map::L, 1);
 
-	for (int idx = 0; idx < amount; idx++) {
-		pushToTop("game_objects.object_" + std::to_string(idx)); // "game_objects.object_" + idx
-		pushToTop("path", false); // Stack looks like:  ["path"] ["object_" + idx] ["game_objects"]
-		std::string path = std::string(lua_tostring(Map::L, -1)); // ["path"] gets turned into string
+	for (int idx = 0; idx < gameObjectSize; idx++) {
+		pushToTop("data.object_" + std::to_string(idx), Map::L);
+		std::string path = std::string((char*)lua_tostring(Map::L, -1));
+		lua_pop(Map::L, 1);
 		
-		lua_remove(Map::L, -1); // ["path"] gets poped from stack
+		lua_State* curGameObjectFile = luaL_newstate();
+		luaL_openlibs(curGameObjectFile);
+
+		if (luaL_loadfile(curGameObjectFile, ("./__game/" + path).c_str()) || lua_pcall(curGameObjectFile, 0, 0, 0)) {
+			curGameObjectFile = 0;
+			std::cout << "Error" << std::endl;
+		}
+
+
+		
+		pushToTop("data.size", curGameObjectFile);
+		unsigned int dllAmount = (unsigned int)lua_tointeger(curGameObjectFile, -1);
+		lua_pop(curGameObjectFile, 1);
+
 		
 		GameObject* gObj = new GameObject();
 
-		HINSTANCE dllHandle = LoadLibrary(("./__game/" + path).c_str()); // "./__game/" + path
-		gObj->dllHandle = dllHandle;
+		for (size_t jdx = 0; jdx < dllAmount; jdx++){
+			pushToTop("data.dll_" + std::to_string(jdx), curGameObjectFile);
+			pushToTop("path", curGameObjectFile, false);
 
-		gObj->setupPointer = (functionType)(GetProcAddress(dllHandle, "setup"));
-		gObj->updatePointer = (functionType)(GetProcAddress(dllHandle, "update"));
+			std::string dllPath = std::string((char*)lua_tostring(curGameObjectFile, -1));
+			lua_remove(curGameObjectFile, -1);
 
-		pushToTop("amount", false); // Stack looks like:  ["amount"] ["object_" + idx] ["game_objects"]
+			HINSTANCE dllHandle = LoadLibrary(dllPath.c_str());
+			gObj->dllHandles.push_back(dllHandle);
+			gObj->setupPointers.push_back((functionType)(GetProcAddress(dllHandle, "setup")));
+			gObj->updatePointers.push_back((functionType)(GetProcAddress(dllHandle, "update")));
+			
+			pushToTop("size", curGameObjectFile, false);
+			unsigned int attrAmount = (unsigned int)lua_tonumber(curGameObjectFile, -1);
+			lua_remove(curGameObjectFile, -1);
 
-		int amountAttributes = (int)lua_tointeger(Map::L, -1); 
+			for (size_t attrIdx = 0; attrIdx < attrAmount; attrIdx++)
+			{
+				pushToTop("attribute_" + std::to_string(attrIdx), curGameObjectFile, false);
 
-		lua_remove(Map::L, -1); // ["amount"] gets poped from stack
+				pushToTop("name", curGameObjectFile, false);
+				std::string name = std::string((char*)lua_tostring(curGameObjectFile, -1));
+				lua_remove(curGameObjectFile, -1);
+			
+				pushToTop("type", curGameObjectFile, false);
+				std::string type = std::string(lua_tostring(curGameObjectFile, -1));
+				lua_remove(curGameObjectFile, -1);
 
-		for (int jdx = 0; jdx < amountAttributes; jdx++) {
-			pushToTop("attribute_" + std::to_string(jdx), false);
+				pushToTop("content", curGameObjectFile, false);
+			
+				if (type == "int") {
+					gObj->addAttribute<int>(name, (int*)GetProcAddress(dllHandle, name.c_str()));
+					gObj->setAttribute<int>(name, (int)lua_tointeger(curGameObjectFile, -1));
+				}
 
-			pushToTop("name", false);
-			std::string name = std::string(lua_tostring(Map::L, -1));
-			lua_remove(Map::L, -1);
+				else if (type == "string") {
+					gObj->addAttribute<char*>(name, (char**)GetProcAddress(dllHandle, name.c_str()));
+					gObj->setAttribute<char*>(name, (char*)lua_tostring(curGameObjectFile, -1));
+				}
 
-			pushToTop("type", false);
-			std::string type = std::string(lua_tostring(Map::L, -1));
-			lua_remove(Map::L, -1);
 
-			pushToTop("content", false);
+				else if (type == "boolean") {
+					gObj->addAttribute<bool>(name, (bool*)GetProcAddress(dllHandle, name.c_str()));
+					gObj->setAttribute<bool>(name, (bool)lua_toboolean(curGameObjectFile, -1));
+				}
 
-			if (type == "int") {
-				gObj->addAttribute<int>(name, (int*)GetProcAddress(dllHandle, name.c_str()));
-				gObj->setAttribute<int>(name, (int)lua_tointeger(Map::L, -1));
+
+				else if (type == "double") {
+					gObj->addAttribute<double>(name, (double*)GetProcAddress(dllHandle, name.c_str()));
+					gObj->setAttribute<double>(name, (double)lua_tonumber(Map::L, -1));
+				}
+
+				else
+					return 1;
+
+				lua_remove(curGameObjectFile, -1);
+				lua_remove(curGameObjectFile, -1);
+
 			}
 
-			else if (type == "string") {
-				gObj->addAttribute<char*>(name, (char**)GetProcAddress(dllHandle, name.c_str()));
-				gObj->setAttribute<char*>(name, (char*)lua_tostring(Map::L, -1));
-			}
+			GameObjectHandler::get()->addGameObject(gObj, true);
 
-
-			else if (type == "boolean") {
-				gObj->addAttribute<bool>(name, (bool*)GetProcAddress(dllHandle, name.c_str()));
-				gObj->setAttribute<bool>(name, (bool)lua_toboolean(Map::L, -1));
-			}
-
-
-			else if (type == "double") {
-				gObj->addAttribute<double>(name, (double*)GetProcAddress(dllHandle, name.c_str()));
-				gObj->setAttribute<double>(name, (double)lua_tonumber(Map::L, -1));
-			}
-
-			else
-				return 1;
-
-			lua_remove(Map::L, -1);
-			lua_remove(Map::L, -1);
 
 		}
-		lua_pop(Map::L, 1);
-		gObj->setupPointer();
-		gObj->updatePointer();
-	
-		dllHandles.push_back(dllHandle);
-		gameObjects.push_back(gObj);
-	
+
+
 	}
+
+	
 
 
 
