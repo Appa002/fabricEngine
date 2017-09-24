@@ -4,12 +4,6 @@ cmake_minimum_required(VERSION 3.0)
 file(GLOB LUA_HEADER_H ${CMAKE_CURRENT_SOURCE_DIR}/lua/src/*h)
 file(GLOB LUA_HEADER_HPP ${CMAKE_CURRENT_SOURCE_DIR}/lua/src/*hpp)
 
-include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}/header
-	${CMAKE_CURRENT_SOURCE_DIR}/SDL/include
-	${CMAKE_CURRENT_SOURCE_DIR}/lua/src
-)
-
 set(HEADER_FILES 
 	${CMAKE_CURRENT_SOURCE_DIR}/header/fabric/engine.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/header/fabric/singleton.hpp
@@ -23,6 +17,11 @@ set(HEADER_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/header/fabric/vertex_attribute_object.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/header/fabric/unit_framework.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/header/fabric/tests.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/header/fabric/objectUtils.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/header/fabric/transform.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/header/fabric/gameobjectHandler.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/header/fabric/mesh.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/header/fabric/error_handler.hpp
 )
 
 set(SOURCE_FILES
@@ -36,6 +35,11 @@ set(SOURCE_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/fabric/vertex_attribute_object.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/fabric/unit_framework.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/fabric/tests.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/fabric/transform.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/fabric/gameobjectHandler.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/fabric/mesh.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/fabric/error_handler.cpp
+
 )
 
 
