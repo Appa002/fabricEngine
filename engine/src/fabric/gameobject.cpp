@@ -58,7 +58,7 @@ fabric::Attribute fabric::GameObject::getAttribute(std::string name)
 int fabric::GameObject::render(){
 	VertexAttributeObject vao = GameObject::mesh.getVertexAttributeObject();
 
-	// transform attribute check
+	// transform attribute sync
 	bool error = false; 
 	Attribute attrib = findAttribute<vec3>("transform", &error, 0);
 	vec3* content;
@@ -79,7 +79,7 @@ int fabric::GameObject::render(){
 
 
 	// Super dumm solution from past me.
-	for (unsigned int i = 0; i < GameObject::mesh.getData().size(); i++) {
+	for (unsigned int i = 0; i < GameObject::mesh.getData().size() / 3; i++) {
 		myPoints.push_back(content->x);
 		myPoints.push_back(content->y);
 		myPoints.push_back(content->z);
@@ -91,6 +91,26 @@ int fabric::GameObject::render(){
 	
 	vao.enableAttribArray(1);
 	vao.setVertexAtrrib(1, 3, vbo);
+	// ! transform attribute sync
+
+
+	// cam position sync
+
+	vbo = VertexBufferObject(true, GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+	vec3 campPos = DataCore::get()->camPos;
+	myPoints = std::vector<GLdouble>();
+
+	for (unsigned int i = 0; i < GameObject::mesh.getData().size() / 3; i++) {
+		myPoints.push_back(campPos.x);
+		myPoints.push_back(campPos.y);
+		myPoints.push_back(campPos.z);
+	}
+
+	vbo.make<GLdouble>(myPoints);
+	vao.enableAttribArray(2);
+	vao.setVertexAtrrib(2, 3, vbo);
+
+	// ! cam position sync
 
 	glBindVertexArray(vao.handle);
 	glDrawArrays(GL_TRIANGLES, 0, 3);

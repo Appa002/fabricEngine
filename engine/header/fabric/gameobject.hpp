@@ -11,8 +11,11 @@
 #include <iostream>
 #include <bitset>
 #include <Windows.h>
+#include <fabric/dataCore.hpp>
 
 namespace fabric {
+
+
 	class Attribute
 	{
 	public:
