@@ -17,7 +17,7 @@ namespace fabric {
 		VertexAttributeObject();
 		VertexAttributeObject(bool glContext);
 		int generate();
-		int enableAttribArray(unsigned int index, VertexBufferObject vbo);
+		int enableAttribArray(unsigned int index);
 		int setVertexAtrrib(unsigned int index, unsigned int size, VertexBufferObject vbo);
 		int setVertexAtrrib(unsigned int index, unsigned int size, GLenum type, VertexBufferObject vbo);
 		int setVertexAtrrib(unsigned int index, unsigned int size, GLenum type, GLboolean normalized, VertexBufferObject vbo);
