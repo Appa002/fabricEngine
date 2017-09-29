@@ -22,6 +22,8 @@ set(HEADER_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/header/fabric/gameobjectHandler.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/header/fabric/mesh.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/header/fabric/error_handler.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/header/fabric/dataCore.hpp
+
 )
 
 set(SOURCE_FILES
@@ -39,7 +41,7 @@ set(SOURCE_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/fabric/gameobjectHandler.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/fabric/mesh.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/fabric/error_handler.cpp
-
+	${CMAKE_CURRENT_SOURCE_DIR}/src/fabric/dataCore.cpp
 )
 
 
