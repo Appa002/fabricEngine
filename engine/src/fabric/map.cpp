@@ -1,17 +1,8 @@
 #include <fabric/map.hpp>
 
 
-fabric::Map::Map(std::string fileName)
+fabric::Map::Map()
 {
-	Map::L = luaL_newstate();
-	luaL_openlibs(Map::L);
-
-	if (luaL_loadfile(Map::L, fileName.c_str()) || lua_pcall(Map::L, 0, 0, 0)) {
-		Map::L = 0;
-		std::cout << "Error" << std::endl;
-	}
-
-
 }
 
 fabric::Map::~Map()
@@ -73,7 +64,18 @@ int fabric::Map::close() {
 
 
 typedef void(*functionType)();
-int fabric::Map::open() {
+int fabric::Map::open(std::string fileName) {
+
+
+	Map::L = luaL_newstate();
+	luaL_openlibs(Map::L);
+
+	if (luaL_loadfile(Map::L, fileName.c_str()) || lua_pcall(Map::L, 0, 0, 0)) {
+		Map::L = 0;
+		std::cout << "Error" << std::endl;
+	}
+
+
 	pushToTop("data.size", Map::L);
 	int gameObjectSize = (int)lua_tointeger(Map::L, -1);
 	lua_pop(Map::L, 1);
@@ -125,7 +127,7 @@ int fabric::Map::open() {
 				lua_remove(curGameObjectFile, -1);
 
 				// Basic name mangeling
-				std::string mangledName = "dll_" + std::to_string(jdx) + name;
+				std::string mangledName = std::to_string(jdx) + "$" + name;
 				//
 
 
@@ -154,7 +156,31 @@ int fabric::Map::open() {
 
 				else if (type == "double") {
 					gObj->addAttribute<double>(mangledName, (double*)GetProcAddress(dllHandle, name.c_str()));
-					gObj->setAttribute<double>(mangledName, (double)lua_tonumber(Map::L, -1));
+					gObj->setAttribute<double>(mangledName, (double)lua_tonumber(curGameObjectFile, -1));
+				}
+				else if (type == "vec3"){
+					vec3 myVec;
+
+					pushToTop("x", curGameObjectFile, false);
+					double x = (double)lua_tonumber(curGameObjectFile, -1);
+					lua_remove(curGameObjectFile, -1);
+
+					pushToTop("y", curGameObjectFile, false);
+					double y = (double)lua_tonumber(curGameObjectFile, -1);
+					lua_remove(curGameObjectFile, -1);
+
+					pushToTop("z", curGameObjectFile, false);
+					double z = (double)lua_tonumber(curGameObjectFile, -1);
+					lua_remove(curGameObjectFile, -1);
+
+					myVec.x = x;
+					myVec.y = y;
+					myVec.z = z;
+
+					gObj->addAttribute<vec3>(mangledName, (vec3*)GetProcAddress(dllHandle, name.c_str()));
+					gObj->setAttribute<vec3>(mangledName, myVec);
+					
+
 				}
 
 				else
@@ -167,7 +193,32 @@ int fabric::Map::open() {
 
 
 		}
+		Mesh mesh = Mesh();
+		std::vector<vec3> _data;
+		vec3 myVecM;
 
+		myVecM.x = 0.0f;
+		myVecM.y = 0.5f;
+		myVecM.z = 0.0f;
+		_data.push_back(myVecM);
+
+		myVecM = vec3();
+
+		myVecM.x = 0.5f;
+		myVecM.y = -0.5f;
+		myVecM.z = 0.0f;
+		_data.push_back(myVecM);
+
+		myVecM = vec3();
+
+		myVecM.x = -0.5f;
+		myVecM.y = -0.5f;
+		myVecM.z = 0.0f;
+		_data.push_back(myVecM);
+
+
+		mesh.make(_data);
+		gObj->setMesh(mesh);
 		GameObjectHandler::get()->addGameObject(gObj, true);
 
 
