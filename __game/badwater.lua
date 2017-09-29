@@ -1,26 +1,9 @@
 print("Loading Badwater")
 
 
-game_objects = {
+data = {
+	size = 2,
 
-	amount = 1;
-
-	object_0 = {
-		name = "gameobject",
-		path = "gameobject.dll",
-		amount = 2,
-
-		attribute_0 = {
-			name = "mystring",
-			type = "string",
-			content = "Hello, World!"
-		},
-
-		attribute_1 = {
-			name = "myint",
-			type = "int",
-			content = 42;
-		}
-		
-	}
+	object_0 = "gameobject.lua",
+	object_1 = "gameobject1.lua"
 }
