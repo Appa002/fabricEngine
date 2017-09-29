@@ -43,6 +43,7 @@ namespace fabric {
 		~Engine();
 	
 	private:
+		Map map;
 		std::unique_ptr<std::vector<GameObject>> vLoadedGameObjects;
 		SDL_Window* m_pWindow;
 		std::unique_ptr<SDL_Surface> m_pScreenSurface;

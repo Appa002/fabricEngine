@@ -12,6 +12,7 @@ int fabric::Engine::startRoutin() {
 
 	fabric::Logfile::get()->open("../log");
 
+
 	LOG_OUT("Initializing Fabric Engine", "[INFO]");
 	LOG_OUT("Loading default Map", "[INFO]");
 	LOG_OUT("Initializing SDL", "[INFO]");
@@ -45,36 +46,7 @@ int fabric::Engine::startRoutin() {
 	
 	Engine::state = FB_CONTEXT_CREATED;
 
-	GameObject* gObj = new GameObject();
-
-	Mesh mesh = Mesh();
-	std::vector<vec3> _data;
-	vec3 myVec;
-
-	myVec.x = 0.0f;
-	myVec.y = 0.5f;
-	myVec.z = 0.0f;
-	_data.push_back(myVec);
-
-	myVec = vec3();
-
-	myVec.x = 0.5f;
-	myVec.y = -0.5f;
-	myVec.z = 0.0f;
-	_data.push_back(myVec);
-
-	myVec = vec3();
-
-	myVec.x = -0.5f;
-	myVec.y = -0.5f;
-	myVec.z = 0.0f;
-	_data.push_back(myVec);
-
-
-	mesh.make(_data);
-	gObj->setMesh(mesh);
-
-	fabric::GameObjectHandler::get()->addGameObject(gObj, false);
+	
 	
 	vs = std::unique_ptr<Shader>( new Shader(GL_VERTEX_SHADER, "./__game/vertex.glsl") );
 	LOG_OUT("Vertex Shader compile info: " + vs->getLog(), "[INFO]");
@@ -89,6 +61,10 @@ int fabric::Engine::startRoutin() {
 	
 	shader_programme->validate();
 	
+
+	map.open("./__game/badwater.lua");
+
+
 	UNIT_PUSH(new int((int)m_pWindow));
 
 	UNIT_PUSH(new int(SDL_GL_SetSwapInterval(1)));
