@@ -11,7 +11,7 @@ fabric::Map::Map(std::string fileName)
 		std::cout << "Error" << std::endl;
 	}
 
-	
+
 }
 
 fabric::Map::~Map()
@@ -31,8 +31,8 @@ int fabric::Map::pushToTop(std::string name, lua_State* L, bool __first)
 	bool first = __first;
 	std::string subPropertyName = "";			//example: "foo.bar.x": here foo, bar and x are subPropertyNames as they are seperated by a .
 	for (unsigned int i = 0; i < name.size(); i++) {
-		
-		if(name.at(i) != '.') subPropertyName = subPropertyName + name.at(i);
+
+		if (name.at(i) != '.') subPropertyName = subPropertyName + name.at(i);
 
 		if (name.at(i) == '.' || i + (unsigned int)(1) >= name.size())
 		{
@@ -65,7 +65,7 @@ int fabric::Map::close() {
 
 		delete GameObjectHandler::get()->gObjs.at(gameObjectIndex);
 		GameObjectHandler::get()->gObjs.erase(GameObjectHandler::get()->gObjs.begin() + gameObjectIndex);
-		
+
 	}
 	return 0;
 }
@@ -82,7 +82,7 @@ int fabric::Map::open() {
 		pushToTop("data.object_" + std::to_string(idx), Map::L);
 		std::string path = std::string((char*)lua_tostring(Map::L, -1));
 		lua_pop(Map::L, 1);
-		
+
 		lua_State* curGameObjectFile = luaL_newstate();
 		luaL_openlibs(curGameObjectFile);
 
@@ -92,15 +92,15 @@ int fabric::Map::open() {
 		}
 
 
-		
+
 		pushToTop("data.size", curGameObjectFile);
 		unsigned int dllAmount = (unsigned int)lua_tointeger(curGameObjectFile, -1);
 		lua_pop(curGameObjectFile, 1);
 
-		
+
 		GameObject* gObj = new GameObject();
 
-		for (size_t jdx = 0; jdx < dllAmount; jdx++){
+		for (size_t jdx = 0; jdx < dllAmount; jdx++) {
 			pushToTop("data.dll_" + std::to_string(jdx), curGameObjectFile);
 			pushToTop("path", curGameObjectFile, false);
 
@@ -111,7 +111,7 @@ int fabric::Map::open() {
 			gObj->dllHandles.push_back(dllHandle);
 			gObj->setupPointers.push_back((functionType)(GetProcAddress(dllHandle, "setup")));
 			gObj->updatePointers.push_back((functionType)(GetProcAddress(dllHandle, "update")));
-			
+
 			pushToTop("size", curGameObjectFile, false);
 			unsigned int attrAmount = (unsigned int)lua_tonumber(curGameObjectFile, -1);
 			lua_remove(curGameObjectFile, -1);
@@ -123,33 +123,38 @@ int fabric::Map::open() {
 				pushToTop("name", curGameObjectFile, false);
 				std::string name = std::string((char*)lua_tostring(curGameObjectFile, -1));
 				lua_remove(curGameObjectFile, -1);
-			
+
+				// Basic name mangeling
+				std::string mangledName = "dll_" + std::to_string(jdx) + name;
+				//
+
+
 				pushToTop("type", curGameObjectFile, false);
 				std::string type = std::string(lua_tostring(curGameObjectFile, -1));
 				lua_remove(curGameObjectFile, -1);
 
 				pushToTop("content", curGameObjectFile, false);
-			
+
 				if (type == "int") {
-					gObj->addAttribute<int>(name, (int*)GetProcAddress(dllHandle, name.c_str()));
-					gObj->setAttribute<int>(name, (int)lua_tointeger(curGameObjectFile, -1));
+					gObj->addAttribute<int>(mangledName, (int*)GetProcAddress(dllHandle, name.c_str()));
+					gObj->setAttribute<int>(mangledName, (int)lua_tointeger(curGameObjectFile, -1));
 				}
 
 				else if (type == "string") {
-					gObj->addAttribute<char*>(name, (char**)GetProcAddress(dllHandle, name.c_str()));
-					gObj->setAttribute<char*>(name, (char*)lua_tostring(curGameObjectFile, -1));
+					gObj->addAttribute<char*>(mangledName, (char**)GetProcAddress(dllHandle, name.c_str()));
+					gObj->setAttribute<char*>(mangledName, (char*)lua_tostring(curGameObjectFile, -1));
 				}
 
 
 				else if (type == "boolean") {
-					gObj->addAttribute<bool>(name, (bool*)GetProcAddress(dllHandle, name.c_str()));
-					gObj->setAttribute<bool>(name, (bool)lua_toboolean(curGameObjectFile, -1));
+					gObj->addAttribute<bool>(mangledName, (bool*)GetProcAddress(dllHandle, name.c_str()));
+					gObj->setAttribute<bool>(mangledName, (bool)lua_toboolean(curGameObjectFile, -1));
 				}
 
 
 				else if (type == "double") {
-					gObj->addAttribute<double>(name, (double*)GetProcAddress(dllHandle, name.c_str()));
-					gObj->setAttribute<double>(name, (double)lua_tonumber(Map::L, -1));
+					gObj->addAttribute<double>(mangledName, (double*)GetProcAddress(dllHandle, name.c_str()));
+					gObj->setAttribute<double>(mangledName, (double)lua_tonumber(Map::L, -1));
 				}
 
 				else
@@ -160,15 +165,15 @@ int fabric::Map::open() {
 
 			}
 
-			GameObjectHandler::get()->addGameObject(gObj, true);
-
 
 		}
+
+		GameObjectHandler::get()->addGameObject(gObj, true);
 
 
 	}
 
-	
+
 
 
 
