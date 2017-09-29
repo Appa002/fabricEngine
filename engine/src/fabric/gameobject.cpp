@@ -1,15 +1,6 @@
 #include <fabric/gameobject.hpp>
 
 
-
-void defaultUpdate() {
-	std::cout << "Default update called, is the gameobject correctly setup?" << std::endl;
-}
-
-void defaultSetup() {
-	std::cout << "Default setup called, is the gameobject correctly setup?" << std::endl;
-}
-
 void fabric::GameObject::free()
 {
 	while (GameObject::attributes.size() > 1)
@@ -38,8 +29,6 @@ fabric::GameObject::GameObject() {
 	attr.name = ""; 
 
 	GameObject::attributes.push_back(attr);
-	GameObject::updatePointers.push_back(&defaultUpdate);
-	GameObject::setupPointers.push_back(&defaultSetup);
 }
 
 fabric::GameObject::~GameObject() {
