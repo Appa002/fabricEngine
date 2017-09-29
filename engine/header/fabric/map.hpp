@@ -16,9 +16,9 @@ namespace fabric {
 	class Map {
 	public:
 
-		int open();
+		int open(std::string fileName);
 		int close();
-		Map(std::string fileName);
+		Map();
 		~Map();
 
 	private:
