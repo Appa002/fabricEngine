@@ -12,9 +12,12 @@ namespace fabric {
 		Mesh(){};
 		int make(std::vector<vec3> data);
 		VertexAttributeObject getVertexAttributeObject();
+		std::vector<double> getData();
+
 
 	private:
 		VertexAttributeObject vao;
+		std::vector<double> data;
 	};
 }
 
