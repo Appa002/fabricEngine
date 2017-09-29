@@ -110,6 +110,7 @@ int fabric::Map::open(std::string fileName) {
 			lua_remove(curGameObjectFile, -1);
 
 			HINSTANCE dllHandle = LoadLibrary(dllPath.c_str());
+			std::cout << dllHandle << std::endl;
 			gObj->dllHandles.push_back(dllHandle);
 			gObj->setupPointers.push_back((functionType)(GetProcAddress(dllHandle, "setup")));
 			gObj->updatePointers.push_back((functionType)(GetProcAddress(dllHandle, "update")));
@@ -198,21 +199,21 @@ int fabric::Map::open(std::string fileName) {
 		vec3 myVecM;
 
 		myVecM.x = 0.0f;
-		myVecM.y = 0.5f;
+		myVecM.y = 0.25f;
 		myVecM.z = 0.0f;
 		_data.push_back(myVecM);
 
 		myVecM = vec3();
 
-		myVecM.x = 0.5f;
-		myVecM.y = -0.5f;
+		myVecM.x = 0.25f;
+		myVecM.y = -0.25f;
 		myVecM.z = 0.0f;
 		_data.push_back(myVecM);
 
 		myVecM = vec3();
 
-		myVecM.x = -0.5f;
-		myVecM.y = -0.5f;
+		myVecM.x = -0.25f;
+		myVecM.y = -0.25f;
 		myVecM.z = 0.0f;
 		_data.push_back(myVecM);
 
