@@ -24,6 +24,8 @@
 #include <GL\GLU.h>
 #include <fabric/unit_framework.hpp>
 #include <fabric/error_handler.hpp>
+#include <fabric/dataCore.hpp>
+
 
 
 namespace fabric {

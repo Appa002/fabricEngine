@@ -116,6 +116,12 @@ int fabric::Engine::eventLoop() {
 		}
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		DataCore::get()->camPos.x += 0.01;
+
+		if (DataCore::get()->camPos.x > 1.5){
+			DataCore::get()->camPos.x = -1.5;
+		}
+
 
 		shader_programme->use();
 		GameObjectHandler::get()->renderAll();
