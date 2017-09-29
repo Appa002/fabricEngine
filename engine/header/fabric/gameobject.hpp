@@ -19,7 +19,7 @@ namespace fabric {
 
 		int isValid() {
 			int out = true;
-			if (name == "")
+			if (name == "0$")
 				out = false;
 			if (content == 0)
 				out = false;
@@ -55,34 +55,49 @@ namespace fabric {
 		template<typename T> void setAttribute(std::string name, T content);
 		template<typename T> void removeAttribute(std::string name);
 		template<typename T> Attribute findAttribute(std::string name);
-		template<typename T> Attribute findAttribute(std::string name, unsigned int* idx);
+		template<typename T> Attribute findAttribute(std::string name, bool* error, unsigned int* idx);
 
 	private:
+		std::string removeNameMangling(std::string name);
 		std::vector<Attribute> attributes;
 		Mesh mesh;
 	};
 }
 
+
 template<typename T>
 inline fabric::Attribute fabric::GameObject::findAttribute(std::string name)
 {
-	return GameObject::findAttribute<T>(name, 0);
+	return GameObject::findAttribute<T>(name, 0, 0);
 }
 
-template<typename T> fabric::Attribute fabric::GameObject::findAttribute(std::string name, unsigned int* idx)
+template<typename T> fabric::Attribute fabric::GameObject::findAttribute(std::string name, bool* error, unsigned int* idx)
 {
+
+	name = removeNameMangling(name);
+
 	for (unsigned int i = 0; i < GameObject::attributes.size(); i++) {
-		if (GameObject::attributes.at(i).name == name) {
+		
+		std::string atrName = removeNameMangling(GameObject::attributes.at(i).name);
+
+		if (atrName == name) {
 
 			if (GameObject::attributes.at(i).hash != typeid(T).hash_code()) {
 				throw std::runtime_error("Type dont match!");
 			}
-			if(idx != 0)
+			if (idx != 0) 
 				*idx = i;
+			
+			if (error != 0) 
+				*error = false;
+
 			return GameObject::attributes.at(i);
 		}
 	}
-	throw std::runtime_error("No such attribute");
+	if (error != 0) 
+		*error = true;
+
+	return GameObject::findAttribute<int>("");
 }
 
 template<typename T>
@@ -96,7 +111,7 @@ template<typename T>
 inline void fabric::GameObject::removeAttribute(std::string name)
 {
 	unsigned int i = 0;
-	Attribute attr = findAttribute<T>(name, &i);
+	Attribute attr = findAttribute<T>(name, 0, &i);
 	delete reinterpret_cast<T*>(attr.content);
 	GameObject::attributes.erase(GameObject::attributes.begin() + i);
 	
