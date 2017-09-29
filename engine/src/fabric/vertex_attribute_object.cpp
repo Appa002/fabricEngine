@@ -21,7 +21,7 @@ int fabric::VertexAttributeObject::generate()
 	return 0;
 }
 
-int fabric::VertexAttributeObject::enableAttribArray(unsigned int index, VertexBufferObject vbo)
+int fabric::VertexAttributeObject::enableAttribArray(unsigned int index)
 {
 	glBindVertexArray(VertexAttributeObject::handle);
 	glEnableVertexAttribArray(index);
