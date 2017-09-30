@@ -116,10 +116,10 @@ int fabric::Engine::eventLoop() {
 		}
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		DataCore::get()->camPos.x += 0.01;
-
-		if (DataCore::get()->camPos.x > 1.5){
-			DataCore::get()->camPos.x = -1.5;
+		DataCore::get()->camPos.x -= 0.1;
+		std::cout << DataCore::get()->camPos.x << std::endl;
+		if (DataCore::get()->camPos.x < -16){
+			DataCore::get()->camPos.x = -0;
 		}
 
 
