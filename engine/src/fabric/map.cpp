@@ -199,21 +199,21 @@ int fabric::Map::open(std::string fileName) {
 		vec3 myVecM;
 
 		myVecM.x = 0.0f;
-		myVecM.y = 0.25f;
+		myVecM.y = 5;
 		myVecM.z = 0.0f;
 		_data.push_back(myVecM);
 
 		myVecM = vec3();
 
-		myVecM.x = 0.25f;
-		myVecM.y = -0.25f;
+		myVecM.x = 5;
+		myVecM.y = -5;
 		myVecM.z = 0.0f;
 		_data.push_back(myVecM);
 
 		myVecM = vec3();
 
-		myVecM.x = -0.25f;
-		myVecM.y = -0.25f;
+		myVecM.x = -5;
+		myVecM.y = -5;
 		myVecM.z = 0.0f;
 		_data.push_back(myVecM);
 
