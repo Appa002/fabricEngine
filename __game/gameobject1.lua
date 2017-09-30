@@ -10,7 +10,7 @@ data = {
 		attribute_0 = {
 			name = "transform",
 			type = "vec3",
-			content = {x = 0, y = 0.4, z = 0}
+			content = {x = -0.1, y = -1, z = -7}
 		}
 	}
 }
