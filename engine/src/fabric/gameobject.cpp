@@ -79,7 +79,7 @@ int fabric::GameObject::render(){
 
 
 	// Super dumm solution from past me.
-	for (unsigned int i = 0; i < GameObject::mesh.getData().size() / 3; i++) {
+	for (unsigned int i = 0; i < GameObject::mesh.getData().size(); i++) {
 		myPoints.push_back(content->x);
 		myPoints.push_back(content->y);
 		myPoints.push_back(content->z);
@@ -100,7 +100,8 @@ int fabric::GameObject::render(){
 	vec3 campPos = DataCore::get()->camPos;
 	myPoints = std::vector<GLdouble>();
 
-	for (unsigned int i = 0; i < GameObject::mesh.getData().size() / 3; i++) {
+
+	for (unsigned int i = 0; i < GameObject::mesh.getData().size(); i++) {
 		myPoints.push_back(campPos.x);
 		myPoints.push_back(campPos.y);
 		myPoints.push_back(campPos.z);
@@ -112,8 +113,16 @@ int fabric::GameObject::render(){
 
 	// ! cam position sync
 
+	glDisable(GL_CULL_FACE);
 	glBindVertexArray(vao.handle);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+
+	glDrawArrays(GL_POINTS, 0, this->mesh.getData().size() / 3);
+	for (size_t i = 0; i < this->mesh.getData().size() / 3; i += 3) {
+		glDrawArrays(GL_TRIANGLE_FAN, i, 3);
+
+	}
+
+	//glDrawArrays(GL_P, 0, GameObject::mesh.getData().size());
 
 	return 0;
 }
