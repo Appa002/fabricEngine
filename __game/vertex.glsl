@@ -18,17 +18,38 @@ void main() {
 	float Pz = -(2 * far * near) / (far - near);
 	
 
+	mat4 rotaionY = mat4(
+		cos(0.785398), 0, sin(0.785398), 0,
+		0, 1, 0, 0,
+		-sin(0.785398), 0, cos(0.785398), 0,
+		0, 0, 0, 1
+	);
+
+	mat4 scale = mat4(
+		10, 0, 0, 0,
+		0, 10, 0, 0,
+		0, 0, 10, 0,
+		0, 0, 0,  1
+	);
+
 	mat4 model_to_world = mat4(
-	   0, 0, 1, pos.x,
-   	   0, -1,0, pos.y,
-   	   1, 0, 0, pos.z,
+	   1, 0, 0, pos.x,
+   	   0, 1, 0, pos.y,
+   	   0, 0, 1, pos.z,
    	   0, 0, 0, 1
 	);
 
+	mat4 world_to_view_rotaion = mat4(
+	   	1, 0, 0, 0,
+   		0, 0,-1, 0,
+   		0, 1, 0, 0,
+   		0, 0, 0, 1
+	);
+
 	mat4 world_to_view = mat4(
-	   	0, 0, 1, -cam_pos.x,
-   		0,-1, 0, -cam_pos.y,
-   		1, 0, 0, -cam_pos.z,
+	   	1, 0, 0, -cam_pos.x,
+   		0, 1, 0, -cam_pos.y,
+   		0, 0, 1, -cam_pos.z,
    		0, 0, 0, 1
 	);
 
@@ -41,9 +62,14 @@ void main() {
 
 	vec4 position = vec4(vp, 1);
 
-	position = position * model_to_world;
-	position = position * world_to_view;
-	position = position * view_to_perspective;	
+	//position = position * scale;
+	//position = position * rotaionY;
+
+	position = model_to_world * position;
+	position = world_to_view_rotaion * position;
+	position = world_to_view * position;
+	position = view_to_perspective * position;
+	
 	
 
 
