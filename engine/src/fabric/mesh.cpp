@@ -11,7 +11,7 @@ fabric::VertexAttributeObject fabric::Mesh::getVertexAttributeObject()
 }
 
 int fabric::Mesh::make(std::vector<vec3> data) {
-		VertexBufferObject vbo = VertexBufferObject(true, GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		VertexBufferObject vbo = VertexBufferObject(true, GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW);
 		std::vector<GLdouble> myPoints;
 
 		for (size_t i = 0; i < data.size(); i++) {
