@@ -110,7 +110,7 @@ int fabric::Map::open(std::string fileName) {
 			lua_remove(curGameObjectFile, -1);
 
 			HINSTANCE dllHandle = LoadLibrary(dllPath.c_str());
-			std::cout << dllHandle << std::endl;
+		
 			gObj->dllHandles.push_back(dllHandle);
 			gObj->setupPointers.push_back((functionType)(GetProcAddress(dllHandle, "setup")));
 			gObj->updatePointers.push_back((functionType)(GetProcAddress(dllHandle, "update")));
@@ -180,7 +180,6 @@ int fabric::Map::open(std::string fileName) {
 
 					gObj->addAttribute<vec3>(mangledName, (vec3*)GetProcAddress(dllHandle, name.c_str()));
 					gObj->setAttribute<vec3>(mangledName, myVec);
-					
 
 				}
 
@@ -194,34 +193,15 @@ int fabric::Map::open(std::string fileName) {
 
 
 		}
+
+
+
+		std::vector<vec3> _data = loadObjFromFile("__game/cube.obj");
 		Mesh mesh = Mesh();
-		std::vector<vec3> _data;
-		vec3 myVecM;
-
-		myVecM.x = 0.0f;
-		myVecM.y = 5;
-		myVecM.z = 0.0f;
-		_data.push_back(myVecM);
-
-		myVecM = vec3();
-
-		myVecM.x = 5;
-		myVecM.y = -5;
-		myVecM.z = 0.0f;
-		_data.push_back(myVecM);
-
-		myVecM = vec3();
-
-		myVecM.x = -5;
-		myVecM.y = -5;
-		myVecM.z = 0.0f;
-		_data.push_back(myVecM);
-
 
 		mesh.make(_data);
 		gObj->setMesh(mesh);
 		GameObjectHandler::get()->addGameObject(gObj, true);
-
 
 	}
 
@@ -230,4 +210,83 @@ int fabric::Map::open(std::string fileName) {
 
 
 	return 0;
+}
+
+std::vector<fabric::vec3> fabric::Map::loadObjFromFile(std::string src)
+{
+	std::vector<double> vertices;
+	std::vector<vec3> faces;
+	std::ifstream fileStream(src);
+
+	if (!fileStream) {
+		std::cout << "Couldn't open model " + src << std::endl;
+		return faces;
+	}
+
+	while (fileStream) {
+		std::string curLine = "";
+		std::getline(fileStream, curLine);
+
+		
+		// Load Vertices
+		if (curLine[0] == 'v' && curLine[1] != 'n' && curLine != "") {
+			std::string num = "";
+			
+			for (size_t i = 2; i < curLine.size(); i++){
+				if (curLine.at(i) == ' ' || i + 1 >= curLine.size()) {
+					
+					if (i + 1 >= curLine.size()) num += curLine.at(i); 
+					vertices.push_back(std::stod(num));
+
+					num = "";
+					
+				}else
+					num += curLine.at(i);
+		
+					
+			}
+		}
+		
+		// Load faces (this will allways happen after all Vertices are loaded)
+		if (curLine[0] == 'f'  && curLine != "") {
+			std::string num;
+			vec3 vec;
+
+
+			for (size_t i = 2; i < curLine.size(); i++) {
+				if (curLine.at(i) == '/') {	
+					
+					size_t vertIndexX = (stod(num) - 1) * 3;
+					size_t vertIndexY = vertIndexX + 1;
+					size_t vertIndexZ = vertIndexX + 2;
+
+					vec.x = vertices.at(vertIndexX);
+					vec.y = vertices.at(vertIndexY);
+					vec.z = vertices.at(vertIndexZ);
+
+					std::cout << num << std::endl;
+
+						
+					num = "";
+
+					while (curLine.at(i) != ' ') { 
+						if (i + 1 >= curLine.size()) {
+							faces.push_back(vec);
+							vec = vec3();					
+							break;
+						}
+						i++;
+					}
+						
+
+				}
+				else
+					num += curLine.at(i);
+			}
+		}
+
+	}
+
+
+	return faces;
 }
