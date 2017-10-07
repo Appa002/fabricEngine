@@ -7,7 +7,7 @@
 #include <fabric/vertex_attribute_object.hpp>
 
 namespace fabric {
-	class Mesh {
+	class Mesh: public EngineObject {
 	public:
 		Mesh(){};
 		int make(std::vector<vec3> data);

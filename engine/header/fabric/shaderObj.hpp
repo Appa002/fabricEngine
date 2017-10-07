@@ -9,12 +9,14 @@
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
+#include <fabric/engineObj.hpp>
+
 
 namespace fabric {
 
 	class Shader;
 
-	class Shader {
+	class Shader:public EngineObject {
 	public:
 		GLuint handle = 0;
 		GLenum type;

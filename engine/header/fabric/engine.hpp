@@ -17,6 +17,7 @@
 #include <memory>
 #include <fabric/vertex_buffer_object.hpp>
 #include <fabric/vertex_attribute_object.hpp>
+#include <fabric/engineObj.hpp>
 
 #include <SDL.h>
 #include <glew\glew.h>

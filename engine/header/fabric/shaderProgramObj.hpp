@@ -8,11 +8,12 @@
 #include <string>
 #include <fabric/shaderObj.hpp>
 #include <memory>
+#include <fabric/engineObj.hpp>
 #include <fabric/unit_framework.hpp>
 
 namespace fabric {
 
-	class ShaderProgram {
+	class ShaderProgram : public EngineObject {
 
 	public:
 		ShaderProgram();

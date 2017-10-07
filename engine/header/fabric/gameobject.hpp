@@ -12,12 +12,12 @@
 #include <bitset>
 #include <Windows.h>
 #include <fabric/dataCore.hpp>
+#include <fabric/engineObj.hpp>
 
 namespace fabric {
 
 
-	class Attribute
-	{
+	class Attribute: public EngineObject{
 	public:
 
 		int isValid() {
@@ -36,8 +36,7 @@ namespace fabric {
 		std::string name = "";
 	};
 
-	class  GameObject 
-	{
+	class  GameObject: public EngineObject {
 	public:
 
 		std::vector<HINSTANCE> dllHandles;

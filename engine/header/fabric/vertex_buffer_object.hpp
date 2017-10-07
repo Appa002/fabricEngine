@@ -15,7 +15,7 @@ namespace fabric {
 
 	class VertexBufferObject;
 
-	class VertexBufferObject {
+	class VertexBufferObject : EngineObject{
 	public:
 
 		

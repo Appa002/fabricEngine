@@ -10,7 +10,7 @@
 
 namespace fabric {
 
-	class VertexAttributeObject {
+	class VertexAttributeObject : public EngineObject {
 		
 	public:
 
