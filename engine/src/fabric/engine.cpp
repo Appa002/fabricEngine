@@ -103,8 +103,9 @@ void fabric::Engine::abortRoutin() {
 }
 
 int fabric::Engine::eventLoop() {
+
 	bool bQuit = false;
-	
+
 	while (!bQuit)
 	{
 		
@@ -114,14 +115,11 @@ int fabric::Engine::eventLoop() {
 				return 0;
 			}
 		}
+		
+		
+		GameObjectHandler::get()->updateAll();
+		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		DataCore::get()->camPos.x -= 0.1;
-		std::cout << DataCore::get()->camPos.x << std::endl;
-		if (DataCore::get()->camPos.x < -16){
-			DataCore::get()->camPos.x = -0;
-		}
-
 
 		shader_programme->use();
 		GameObjectHandler::get()->renderAll();
@@ -136,9 +134,16 @@ int fabric::Engine::exitRoutin() {
 	std::cout << "Good bye!" << std::endl;
 
 	SDL_DestroyWindow(m_pWindow);
-
 	SDL_Quit();
-
 	Logfile::get()->close();
+
+	std::cout << "EngineObject Amount: " << EngineObject::getAmount();
+	std::cout << " EngineObject Size: " << EngineObject::getInstance().size() << std::endl;
+
+	EngineObject::deleteAll();
+
+	std::cout << "EngineObject Amount: " << EngineObject::getAmount();
+	std::cout << " EngineObject Size: " << EngineObject::getInstance().size() << std::endl;
+
 	return 0;
 }
