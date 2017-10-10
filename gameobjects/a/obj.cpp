@@ -10,6 +10,7 @@ class fabric::Engine;
 
 
 EXPORT fabric::vec3 transform = fabric::vec3();
+EXPORT char* mesh = "hi";
 
 EXPORT void setup() {
 }
