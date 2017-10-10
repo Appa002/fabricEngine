@@ -16,3 +16,4 @@ GameObjects are compiled DLL's in the __game folder.
 The Lua files contain information about the object.
 Using EXPORT in a game object CPP file one can export a symbol.
 In the Lua files, the values for those symbols are defined.
+Symboles "transform" and "mesh" are predefined and the values get suplied by the engine.
