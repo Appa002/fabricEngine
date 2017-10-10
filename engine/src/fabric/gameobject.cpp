@@ -65,8 +65,6 @@ int fabric::GameObject::render(){
 
 	if (!error)
 		content = reinterpret_cast<vec3*>(attrib.content);
-	
-		
 	else {
 		content = new vec3();
 		content->x = 0;
@@ -117,10 +115,10 @@ int fabric::GameObject::render(){
 	glBindVertexArray(vao.handle);
 
 	glDrawArrays(GL_POINTS, 0, this->mesh.getData().size() / 3);
-	for (size_t i = 0; i < this->mesh.getData().size() / 3; i += 3) {
-		glDrawArrays(GL_TRIANGLE_FAN, i, 3);
 
-	}
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, this->mesh.getData().size() / 3);
+
+	
 
 	//glDrawArrays(GL_P, 0, GameObject::mesh.getData().size());
 
