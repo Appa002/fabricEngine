@@ -196,8 +196,33 @@ int fabric::Map::open(std::string fileName) {
 
 
 
-		std::vector<vec3> _data = loadObjFromFile("__game/cube.obj");
+		std::string objPath = std::string( *reinterpret_cast<char**>(gObj->findAttribute<char*>("mesh").content) );
+		
+
+		std::vector<vec3> _data = loadObjFromFile(objPath);
 		Mesh mesh = Mesh();
+
+	/*	std::vector<vec3> _data;
+
+		vec3 vec;
+		vec.x = -30;
+		vec.y = 0; //Debth Y+
+		vec.z = 0;
+		_data.push_back(vec);
+
+		vec = vec3();
+		vec.x = 30;
+		vec.y = 0;
+		vec.z = 30;
+		_data.push_back(vec);
+
+		vec = vec3();
+
+
+		vec.x = 30;
+		vec.y = 0;
+		vec.z = -30;
+		_data.push_back(vec);*/
 
 		mesh.make(_data);
 		gObj->setMesh(mesh);
@@ -264,7 +289,7 @@ std::vector<fabric::vec3> fabric::Map::loadObjFromFile(std::string src)
 					vec.y = vertices.at(vertIndexY);
 					vec.z = vertices.at(vertIndexZ);
 
-					std::cout << num << std::endl;
+				
 
 						
 					num = "";
